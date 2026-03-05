@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doby Temp Mail | بريد مؤقت احترافي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --bg-light: #f8fafc;
+            --card-light: #ffffff;
+            --text-light: #1e293b;
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --text-dark: #f1f5f9;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark);
+            --card-bg: var(--card-dark);
+            --text-color: var(--text-dark);
+            --border: #334155;
+        }
+
+        [data-theme="light"] {
+            --bg-color: var(--bg-light);
+            --card-bg: var(--card-light);
+            --text-color: var(--text-light);
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        /* حركات خلفية */
+        .bg-circles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden;
+        }
+        .circle {
+            position: absolute;
+            background: var(--primary);
+            filter: blur(80px);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .nav-controls { display: flex; gap: 15px; align-items: center; }
+
+        select, button {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 20px; text-align: center; }
+
+        .main-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            position: relative;
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .main-card:hover { transform: translateY(-10px); }
+
+        .email-display {
+            display: flex;
+            background: var(--bg-color);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            margin: 20px 0;
+            overflow: hidden;
+            direction: ltr;
+        }
+
+        .email-display input {
+            flex: 1; padding: 20px; border: none; background: transparent;
+            font-size: 1.3rem; color: var(--primary); font-weight: bold; text-align: center;
+        }
+
+        .copy-btn { background: var(--primary); color: white; border: none; padding: 0 30px; font-size: 1.2rem; transition: 0.3s; }
+        .copy-btn:hover { background: var(--primary-light); }
+
+        /* تخصيص الميل */
+        .custom-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 20px;
+            direction: ltr;
+        }
+
+        .inbox-container { margin-top: 30px; text-align: right; }
+        .message-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .message-item:hover { border-color: var(--primary); background: rgba(79, 70, 229, 0.05); }
+
+        .modal {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 30px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;
+        }
+
+        footer { margin-top: 50px; padding: 30px; color: var(--text-color); font-weight: bold; }
+        .dev-name { color: var(--primary); font-size: 1.2rem; letter-spacing: 2px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* تحسينات الموبايل */
+        @media (max-width: 600px) {
+            .custom-area { grid-template-columns: 1fr; }
+            .email-display { flex-direction: column; }
+            .copy-btn { padding: 15px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="bg-circles">
+        <div class="circle" style="width: 300px; height: 300px; top: -100px; right: -50px;"></div>
+        <div class="circle" style="width: 400px; height: 400px; bottom: -150px; left: -100px; background: #ec4899;"></div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-bolt-lightning"></i>
+            <span id="brandName">Doby Temp Mail</span>
+        </div>
+        <div class="nav-controls">
+            <select id="langSelect" onchange="changeLanguage()">
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+            </select>
+            <button onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-card">
+            <h1 id="mainTitle">بريدك المؤقت جاهز!</h1>
+            <p id="subTitle" style="color: gray; margin-bottom: 20px;">استخدمه للتسجيل في المواقع وتجنب الرسائل المزعجة.</p>
+
+            <div class="email-display">
+                <input type="text" id="emailAddr" readonly value="جاري التحميل...">
+                <button class="copy-btn" onclick="copyEmail()"><i class="fa-regular fa-copy"></i></button>
+            </div>
+
+            <div class="custom-area">
+                <input type="text" id="customName" placeholder="اسم مخصص">
+                <select id="domainList"></select>
+                <button onclick="createCustomEmail()" class="copy-btn" style="border-radius: 10px;"><i class="fa-solid fa-plus"></i></button>
+            </div>
+
+            <div class="nav-controls" style="justify-content: center; margin-bottom: 20px;">
+                <button onclick="refreshInbox()" style="background: var(--primary); color: white;">
+                    <i class="fa-solid fa-arrows-rotate"></i> <span id="btnRefresh">تحديث البريد</span>
+                </button>
+            </div>
+
+            <div class="inbox-container">
+                <h3 id="inboxTitle">صندوق الوارد</h3>
+                <div id="messagesList">
+                    <p style="text-align: center; padding: 20px; color: gray;">لا توجد رسائل بعد..</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="msgModal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="msgSubject"></h2>
+            <hr style="margin: 15px 0;">
+            <div id="msgBody"></div>
+            <button onclick="closeModal()" style="margin-top: 20px; width: 100%;">إغلاق</button>
+        </div>
+    </div>
+
+    <footer style="text-align: center;">
+        <p>Developed with ❤️ by <span class="dev-name">O S A M A</span></p>
+        <p>&copy; 2026 Doby Temp Mail</p>
+    </footer>
+
+    <script>
+        const API_BASE = "https://www.1secmail.com/api/v1/";
+        let currentEmail = localStorage.getItem('doby_email') || "";
+        let domains = [];
+
+        // الترجمة
+        const i18n = {
+            ar: { title: "بريدك المؤقت جاهز!", sub: "حماية كاملة لخصوصيتك", refresh: "تحديث", inbox: "صندوق الوارد", copy: "تم النسخ!" },
+            en: { title: "Your Temp Mail is Ready!", sub: "Full protection for your privacy", refresh: "Refresh", inbox: "Inbox", copy: "Copied!" },
+            fr: { title: "Votre Mail est Prêt!", sub: "Protection totale de la vie privée", refresh: "Actualiser", inbox: "Boîte de réception", copy: "Copié!" }
+        };
+
+        async function init() {
+            await fetchDomains();
+            if (!currentEmail) {
+                await generateRandomEmail();
+            } else {
+                document.getElementById('emailAddr').value = currentEmail;
+                refreshInbox();
+            }
+            changeLanguage(); // ضبط الاتجاه
+        }
+
+        async function fetchDomains() {
+            const res = await fetch(`${API_BASE}?action=getMessagesList&login=test&domain=1secmail.com`); // فقط لمعرفة النطاقات المتاحة
+            domains = ["1secmail.com", "1secmail.org", "1secmail.net", "wwjmp.com", "esiix.com"];
+            const select = document.getElementById('domainList');
+            domains.forEach(d => {
+                let opt = document.createElement('option');
+                opt.value = d; opt.innerText = d;
+                select.appendChild(opt);
+            });
+        }
+
+        async function generateRandomEmail() {
+            const res = await fetch(`${API_BASE}?action=genRandomMailbox&count=1`);
+            const data = await res.json();
+            currentEmail = data[0];
+            updateEmailUI();
+        }
+
+        function createCustomEmail() {
+            const name = document.getElementById('customName').value.trim();
+            const dom = document.getElementById('domainList').value;
+            if(!name) return alert("ادخل اسماً أولاً");
+            currentEmail = `${name}@${dom}`;
+            updateEmailUI();
+        }
+
+        function updateEmailUI() {
+            document.getElementById('emailAddr').value = currentEmail;
+            localStorage.setItem('doby_email', currentEmail);
+            refreshInbox();
+        }
+
+        async function refreshInbox() {
+            if(!currentEmail) return;
+            const [login, domain] = currentEmail.split('@');
+            const res = await fetch(`${API_BASE}?action=getMessagesList&login=${login}&domain=${domain}`);
+            const msgs = await res.json();
+            
+            const list = document.getElementById('messagesList');
+            list.innerHTML = "";
+            
+            if(msgs.length === 0) {
+                list.innerHTML = `<p style="text-align: center; padding: 20px; color: gray;">انتظار الرسائل... <i class="fa-solid fa-spinner fa-spin"></i></p>`;
+                return;
+            }
+
+            msgs.forEach(m => {
+                const div = document.createElement('div');
+                div.className = "message-item";
+                div.innerHTML = `<div><strong>${m.from}</strong><br><small>${m.subject}</small></div> <span>${m.date.split(' ')[1]}</span>`;
+                div.onclick = () => readMessage(m.id);
+                list.appendChild(div);
+            });
+        }
+
+        async function readMessage(id) {
+            const [login, domain] = currentEmail.split('@');
+            const res = await fetch(`${API_BASE}?action=readMessage&login=${login}&domain=${domain}&id=${id}`);
+            const data = await res.json();
+            
+            document.getElementById('msgSubject').innerText = data.subject;
+            document.getElementById('msgBody').innerHTML = data.htmlBody || data.body;
+            document.getElementById('msgModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('msgModal').style.display = 'none'; }
+
+        function copyEmail() {
+            const el = document.getElementById('emailAddr');
+            el.select();
+            navigator.clipboard.writeText(el.value);
+            alert(i18n[document.getElementById('langSelect').value].copy);
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const theme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', theme);
+            document.getElementById('themeBtn').innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        }
+
+        function changeLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            const t = i18n[lang];
+            document.getElementById('mainTitle').innerText = t.title;
+            document.getElementById('subTitle').innerText = t.sub;
+            document.getElementById('btnRefresh').innerText = t.refresh;
+            document.getElementById('inboxTitle').innerText = t.inbox;
+            
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.body.style.textAlign = lang === 'ar' ? 'right' : 'left';
+            document.querySelector('.main-card').style.textAlign = 'center';
+        }
+
+        init();
+        // تحديث تلقائي كل 10 ثواني
+        setInterval(refreshInbox, 10000);
+    </script>
+</body>
+</html>
