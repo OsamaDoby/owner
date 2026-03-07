@@ -2,69 +2,67 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Doby Chat | 👑</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00f2ff; --queen-pink: #ff007f; }
-        body { font-family: 'Cairo', sans-serif; height: 100dvh; margin: 0; display: flex; flex-direction: column; transition: 0.3s; overflow: hidden; }
+        :root { --neon: #00f2ff; --royal-gold: #ffd700; --queen-pink: #ff007f; }
+        body { font-family: 'Cairo', sans-serif; background: #050505; height: 100vh; margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Dark Mode (Default) */
-        body.dark { background: #050505; color: white; }
-        body.dark .msg-container { background: radial-gradient(circle at center, #1a1a2e 0%, #050505 100%); }
-        body.dark .header { background: #0a0a0a; border-bottom: 1px solid #333; }
-        body.dark .input-bar { background: #111; border-top: 1px solid #333; }
+        /* تأثير النيون والخلفية المتحركة */
+        .neon-border { border: 1px solid var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .queen-border { border: 1px solid var(--queen-pink); box-shadow: 0 0 15px var(--queen-pink); }
         
-        /* Light Mode */
-        body.light { background: #f0f2f5; color: #1c1e21; }
-        body.light .msg-container { background: #e5ddd5; }
-        body.light .header { background: #008069; color: white; border-bottom: none; }
-        body.light .input-bar { background: #f0f0f0; border-top: 1px solid #ddd; }
-        body.light .king-msg { background: #d9fdd3; color: #111b21; border: 1px solid #b7e5b4; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
-        body.light .queen-msg { background: #ffffff; color: #111b21; border: 1px solid #ddd; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .msg-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: radial-gradient(circle at center, #1a1a2e 0%, #050505 100%); }
+        
+        .bubble { max-width: 80%; padding: 12px 18px; border-radius: 20px; font-size: 15px; position: relative; backdrop-filter: blur(5px); animation: fadeIn 0.4s ease; }
+        .king-msg { align-self: flex-start; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--neon); color: #fff; box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2); }
+        .queen-msg { align-self: flex-end; background: rgba(255, 0, 127, 0.1); border: 1px solid var(--queen-pink); color: #fff; box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.2); }
 
-        /* Bubbles */
-        .msg-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { max-width: 85%; padding: 10px 15px; border-radius: 18px; font-size: 15px; animation: pop 0.2s ease; position: relative; }
-        .king-msg { align-self: flex-start; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--neon); }
-        .queen-msg { align-self: flex-end; background: rgba(255, 0, 127, 0.1); border: 1px solid var(--queen-pink); }
-        @keyframes pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .input-bar input { flex: 1; padding: 12px 20px; border-radius: 25px; outline: none; font-size: 16px; border: 1px solid #444; background: #222; color: white; }
-        body.light .input-bar input { background: white; color: black; border: 1px solid #ccc; }
+        /* شريط الكتابة المحسن للموبايل */
+        .input-bar { padding: 15px; background: #111; border-top: 1px solid #333; display: flex; gap: 10px; align-items: center; z-index: 100; }
+        #msg-input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 12px 20px; border-radius: 30px; outline: none; font-size: 16px; -webkit-appearance: none; }
+        #msg-input:focus { border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background: #00ff00; box-shadow: 0 0 10px #00ff00; }
+        .offline { background: #ff0000; }
     </style>
 </head>
-<body class="dark">
+<body>
 
     <div id="login-screen" class="fixed inset-0 z-[200] flex items-center justify-center bg-black p-6">
         <div class="text-center w-full max-w-sm">
             <h1 style="font-family: 'Pacifico';" class="text-5xl text-cyan-400 mb-8 drop-shadow-[0_0_10px_#00f2ff]">Doby Chat</h1>
-            <input type="password" id="secret-code" placeholder="أدخل كود المملكة السري" class="w-full p-4 rounded-full bg-transparent border-2 border-cyan-500 text-white text-center mb-4 outline-none">
-            <button onclick="login()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-full transition-all">دخول</button>
+            <input type="password" id="secret-code" placeholder="أدخل كود المملكة السري" 
+                   class="w-full p-4 rounded-full bg-transparent border-2 border-cyan-500 text-white text-center focus:outline-none focus:box-shadow-[0_0_20px_#00f2ff] mb-4">
+            <button onclick="login()" class="w-full bg-cyan-600 hover:bg-cyan-400 text-white font-bold py-4 rounded-full transition-all">فتح البوابة الملكية</button>
+            <p id="error-msg" class="text-red-500 mt-4 hidden">الكود خاطئ يا مولاي!</p>
         </div>
     </div>
 
-    <header class="header p-3 flex justify-between items-center z-10">
-        <div class="flex items-center gap-2">
-            <div id="main-avatar" class="w-10 h-10 rounded-full border border-cyan-500 flex items-center justify-center text-xl">👑</div>
+    <header class="p-4 bg-[#0a0a0a] border-b border-gray-800 flex justify-between items-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center gap-3">
+            <div id="main-avatar" class="w-12 h-12 rounded-full border-2 border-cyan-500 flex items-center justify-center text-2xl shadow-[0_0_10px_#00f2ff]">👑</div>
             <div>
-                <h2 id="display-name" class="font-bold text-sm">تحميل...</h2>
-                <div class="flex items-center text-[9px]"><span id="partner-status" class="w-2 h-2 rounded-full bg-red-500 mr-1"></span> <span id="status-text">غير متصل</span></div>
+                <h2 id="display-name" class="font-bold text-cyan-400">الملك دوبي</h2>
+                <div class="flex items-center text-[10px]">
+                    <span id="partner-status" class="status-dot offline"></span>
+                    <span id="status-text" class="text-gray-400">طرفك الآخر غير متصل</span>
+                </div>
             </div>
         </div>
-        <div class="flex gap-2">
-            <button onclick="clearChat()" class="p-2 text-xs bg-red-900/30 text-red-400 rounded-full border border-red-900/50">🧹 مسح</button>
-            <button onclick="toggleTheme()" class="p-2 text-lg">🌓</button>
-            <button onclick="logout()" class="p-2 text-sm bg-gray-800 rounded-full">🚪</button>
-        </div>
+        <button onclick="toggleTheme()" class="text-xl opacity-50">🌓</button>
     </header>
 
     <div id="chat-box" class="msg-container"></div>
 
-    <div class="input-bar flex p-3 gap-2">
-        <input type="text" id="msg-input" placeholder="اكتب رسالة..." autocomplete="off">
-        <button onclick="sendMsg()" class="bg-cyan-600 p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+    <div class="input-bar">
+        <input type="text" id="msg-input" placeholder="اكتب رسالة ملكية..." autocomplete="off">
+        <button onclick="sendMsg()" class="bg-cyan-600 p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-[0_0_15px_#00f2ff]">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white"><path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" /></svg>
         </button>
     </div>
@@ -82,69 +80,79 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let myName = localStorage.getItem('doby_user') || "";
+        let myName = "";
+        let partnerName = "";
         const codes = { "1111": "الملك دوبي", "2222": "الملكة دوبي دوبي" };
 
-        if(myName) login(true);
-
-        function login(isAuto = false) {
-            const val = isAuto ? "" : document.getElementById('secret-code').value;
-            if (isAuto || codes[val]) {
-                if(!isAuto) myName = codes[val];
-                localStorage.setItem('doby_user', myName);
-                const partnerName = myName === "الملك دوبي" ? "الملكة دوبي دوبي" : "الملك دوبي";
+        function login() {
+            const val = document.getElementById('secret-code').value;
+            if (codes[val]) {
+                myName = codes[val];
+                partnerName = myName === "الملك دوبي" ? "الملكة دوبي دوبي" : "الملك دوبي";
                 document.getElementById('display-name').innerText = myName;
                 document.getElementById('main-avatar').innerText = myName === "الملك دوبي" ? "🤴" : "👸";
                 document.getElementById('login-screen').style.display = 'none';
                 
-                db.ref('status/' + myName).set("online");
-                db.ref('status/' + myName).onDisconnect().set("offline");
+                // تحديث حالة الاتصال
+                const statusRef = db.ref('status/' + myName);
+                statusRef.set("online");
+                statusRef.onDisconnect().set("offline");
                 
-                db.ref('status/' + partnerName).on('value', s => {
-                    document.getElementById('partner-status').className = s.val() === "online" ? "w-2 h-2 rounded-full bg-green-500 mr-1" : "w-2 h-2 rounded-full bg-red-500 mr-1";
-                    document.getElementById('status-text').innerText = s.val() === "online" ? partnerName + " متصلة" : partnerName + " بعيدة";
-                });
+                checkPartnerStatus();
                 load();
+            } else {
+                document.getElementById('error-msg').classList.remove('hidden');
             }
+        }
+
+        function checkPartnerStatus() {
+            db.ref('status/' + partnerName).on('value', (s) => {
+                const status = s.val();
+                const dot = document.getElementById('partner-status');
+                const txt = document.getElementById('status-text');
+                if(status === "online") {
+                    dot.className = "status-dot online";
+                    txt.innerText = partnerName + " متصلة الآن ✨";
+                } else {
+                    dot.className = "status-dot offline";
+                    txt.innerText = partnerName + " بعيدة عن العرش";
+                }
+            });
         }
 
         function sendMsg() {
             const input = document.getElementById('msg-input');
             if (!input.value.trim()) return;
-            db.ref("messages").push({ u: myName, t: input.value, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), ts: Date.now() });
+            db.ref("messages").push({
+                u: myName,
+                t: input.value,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                ts: Date.now()
+            });
             input.value = "";
-            input.focus();
+            input.focus(); // إبقاء التركيز للكتابة المستمرة
         }
 
         function load() {
-            const box = document.getElementById('chat-box');
-            db.ref("messages").on("value", snapshot => {
-                box.innerHTML = "";
-                snapshot.forEach(child => {
-                    const d = child.val();
-                    const isMe = d.u === myName;
-                    box.innerHTML += `<div class="flex flex-col ${isMe ? 'items-start' : 'items-end'} w-full">
+            db.ref("messages").limitToLast(30).on("child_added", s => {
+                const d = s.val();
+                const isMe = d.u === myName;
+                const html = `
+                    <div class="flex flex-col ${isMe ? 'items-start' : 'items-end'} w-full">
                         <div class="bubble ${isMe ? 'king-msg' : 'queen-msg'}">
-                            <p class="text-[9px] opacity-60 font-bold">${d.u}</p>
+                            <p class="text-[10px] mb-1 opacity-70 font-bold">${d.u}</p>
                             <p>${d.t}</p>
-                            <p class="text-[8px] text-right opacity-40">${d.time}</p>
-                        </div></div>`;
-                });
+                            <p class="text-[8px] mt-1 text-right opacity-50">${d.time}</p>
+                        </div>
+                    </div>`;
+                const box = document.getElementById('chat-box');
+                box.innerHTML += html;
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        function toggleTheme() { document.body.classList.toggle('light'); document.body.classList.toggle('dark'); }
-        
-        function logout() { localStorage.removeItem('doby_user'); location.reload(); }
-
-        function clearChat() {
-            if(confirm("هل أنت متأكد من مسح جميع الذكريات (الرسائل)؟")) {
-                db.ref("messages").remove();
-            }
-        }
-
-        document.getElementById('msg-input').onkeypress = (e) => e.key === 'Enter' && sendMsg();
+        // منع زووم المتصفح عند الكتابة في الآيفون
+        document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     </script>
 </body>
 </html>
