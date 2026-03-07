@@ -2,238 +2,139 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Doby Mail | Osama Omar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doby Cloud - سحابتك الشخصية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            --neon: #00f2ff; --purple: #bc13fe; --bg: #050508;
-            --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); --text: #ffffff;
-        }
-
-        [data-theme="light"] {
-            --bg: #f4f7f6; --glass: rgba(255, 255, 255, 0.9); --text: #1a1a1a; --border: rgba(0,0,0,0.1); --neon: #4f46e5;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: background 0.4s, color 0.4s; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-
-        .nebula {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0, 242, 255, 0.07), transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(188, 19, 254, 0.07), transparent 40%);
-            z-index: -1; animation: pulseBg 8s infinite alternate;
-        }
-        @keyframes pulseBg { from { transform: scale(1); opacity: 0.5; } to { transform: scale(1.1); opacity: 1; } }
-
-        header {
-            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .logo i { color: var(--neon); filter: drop-shadow(0 0 8px var(--neon)); }
-
-        .container { width: 92%; max-width: 900px; margin: 30px auto; }
-
-        .glass-panel {
-            background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--border);
-            border-radius: 35px; padding: 40px 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-
-        /* منطقة التوليد المحدثة */
-        .email-setup { display: flex; flex-direction: column; gap: 10px; margin: 25px 0; }
-        .email-display {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--neon); padding: 20px;
-            border-radius: 15px; font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--neon);
-            cursor: pointer; word-break: break-all;
-        }
-        .domain-select {
-            background: var(--bg); color: var(--text); border: 1px solid var(--border);
-            padding: 10px; border-radius: 10px; outline: none; cursor: pointer;
-        }
-
-        .controls { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        @media (min-width: 600px) { .controls { grid-template-columns: repeat(4, 1fr); } }
-
-        .btn {
-            background: var(--glass); border: 1px solid var(--border); color: var(--text);
-            padding: 18px 10px; border-radius: 20px; cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-        }
-        .btn:hover { background: var(--neon); color: #000; transform: translateY(-5px); }
-
-        .inbox-card { margin-top: 40px; text-align: right; }
-        .msg-item {
-            background: var(--glass); border: 1px solid var(--border); padding: 20px;
-            border-radius: 20px; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .desc-box { margin-top: 50px; background: var(--glass); padding: 35px; border-radius: 30px; border: 1px solid var(--border); text-align: right; line-height: 1.8; }
-        .desc-box h2 { color: var(--neon); margin-bottom: 10px; }
-
-        #qrModal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none;
-            flex-direction: column; align-items: center; justify-content: center; z-index: 3000;
-        }
-        #qrcode { background: white; padding: 20px; border-radius: 15px; }
-
-        footer { padding: 50px; text-align: center; border-top: 1px solid var(--border); margin-top: 50px; }
-        .osama { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--purple); text-shadow: 0 0 10px var(--purple); }
-        
-        [dir="ltr"] .inbox-card, [dir="ltr"] .desc-box { text-align: left; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; }
+        .logo-text { font-family: 'Arial Black', sans-serif; letter-spacing: -1px; }
+        .drop-zone { border: 3px dashed #3b82f6; transition: 0.3s; background: white; }
+        .drop-zone:hover { border-color: #1d4ed8; background-color: #eff6ff; }
+        .gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
     </style>
 </head>
-<body data-theme="dark">
+<body class="flex flex-col min-h-screen">
 
-    <div class="nebula"></div>
-
-    <header>
-        <a href="javascript:location.reload()" class="logo"><i class="fa-solid fa-bolt-lightning"></i> DOBY</a>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <button id="themeBtn" onclick="toggleTheme()" style="background:none; border:none; color:var(--text); font-size:1.5rem; cursor:pointer;">
-                <i class="fa-solid fa-sun"></i>
-            </button>
-            <button onclick="changeLang()" id="langBtn" style="background:var(--neon); color:#000; border:none; padding:6px 15px; border-radius:10px; font-weight:bold; cursor:pointer;">EN</button>
+    <header class="bg-white shadow-md p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="gradient-bg p-2 rounded-lg shadow-lg">
+                    <i class="fas fa-cloud text-white text-2xl"></i>
+                </div>
+                <span class="text-3xl font-bold text-blue-900 logo-text ml-2">Doby<span class="text-blue-500">Cloud</span></span>
+            </div>
+            <div class="hidden md:block text-gray-500 text-sm italic">أسرع وسيلة لمشاركة ملفاتك</div>
         </div>
     </header>
 
-    <div class="container">
-        <div class="glass-panel">
-            <h1 id="t-h1">بريدك النيوني المشفر</h1>
-            <p id="t-p1" style="opacity: 0.6;">إخفاء الهوية بضغطة زر واحدة</p>
-            
-            <div class="email-setup">
-                <div class="email-display" onclick="copyMail()" id="emailText">جاري التوليد...</div>
-                <select id="domainSelect" class="domain-select" onchange="updateDomain()">
-                    <option value="1secmail.com">@1secmail.com</option>
-                    <option value="1secmail.org">@1secmail.org</option>
-                    <option value="1secmail.net">@1secmail.net</option>
-                    <option value="kzaxw.com">@kzaxw.com</option>
-                    <option value="vjuum.com">@vjuum.com</option>
-                </select>
+    <main class="flex-grow container mx-auto px-4 py-12 max-w-2xl">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-8 text-center border-b border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-800">مرحباً بك في دوبي كلاود</h2>
+                <p class="text-gray-500 mt-2">ارفع ملفاتك واحصل على رابط التحميل فوراً</p>
             </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="copyMail()"><i class="fa-solid fa-copy"></i><span id="b-copy">نسخ</span></button>
-                <button class="btn" onclick="showQR()"><i class="fa-solid fa-qrcode"></i><span id="b-qr">باركود</span></button>
-                <button class="btn" onclick="refreshInbox()"><i class="fa-solid fa-sync-alt"></i><span id="b-refresh">تحديث</span></button>
-                <button class="btn" onclick="generateNew()"><i class="fa-solid fa-plus-circle"></i><span id="b-new">جديد</span></button>
+
+            <div class="p-8">
+                <div id="drop-zone" class="drop-zone rounded-2xl p-12 flex flex-col items-center cursor-pointer mb-6">
+                    <div class="bg-blue-100 p-4 rounded-full mb-4">
+                        <i class="fas fa-arrow-up text-3xl text-blue-600 animate-bounce"></i>
+                    </div>
+                    <p class="text-gray-600 font-medium">اسحب الملف هنا</p>
+                    <p class="text-gray-400 text-xs mt-1">أو اضغط لتصفح جهازك</p>
+                    <input type="file" id="file-input" class="hidden">
+                </div>
+
+                <div id="upload-status" class="hidden mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span id="file-name-display" class="text-sm font-medium text-gray-600 truncate w-48"></span>
+                        <span id="percent" class="text-sm font-bold text-blue-600">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progress-bar" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div id="result-area" class="hidden animate-fade-in">
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2 ml-2"></i>
+                            <span class="text-sm text-green-700">تم الرفع بنجاح!</span>
+                        </div>
+                        <button onclick="copyLink()" class="bg-green-600 text-white px-4 py-1 rounded-lg text-xs hover:bg-green-700">نسخ الرابط</button>
+                    </div>
+                    <input type="text" id="download-url" readonly class="w-full mt-3 p-2 bg-gray-100 border rounded-lg text-xs text-blue-600 outline-none">
+                </div>
             </div>
         </div>
+    </main>
 
-        <div class="inbox-card">
-            <h3 id="t-inbox">الرسائل الواردة</h3>
-            <div id="messages">
-                <p style="text-align: center; padding: 40px; opacity: 0.3;" id="t-empty">في انتظار وصول رسائل جديدة..</p>
-            </div>
-        </div>
-
-        <div class="desc-box">
-            <h2 id="t-wh-h">ما هو Doby Mail؟</h2>
-            <p id="t-wh-p">هو نظام بريد إلكتروني مؤقت يحميك من الرسائل المزعجة (Spam) ويحافظ على خصوصية بريدك الأصلي عند التسجيل في المواقع.</p>
-            <h2 id="t-how-h" style="margin-top:20px;">طريقة الاستخدام</h2>
-            <p id="t-how-p">انسخ العنوان، استخدمه في أي موقع، ثم اضغط على زر "تحديث" لتظهر لك رسائل التفعيل هنا فوراً.</p>
-        </div>
-    </div>
-
-    <div id="qrModal" onclick="this.style.display='none'">
-        <div id="qrcode"></div>
-        <p style="color: white; margin-top:20px; font-family:'Orbitron';">SCAN ME</p>
-    </div>
-
-    <footer>
-        <p>Advanced Privacy Protocol by</p>
-        <p class="osama">OSAMA OMAR</p>
+    <footer class="p-6 text-center text-gray-500">
+        <p>&copy; 2024 <b>Doby Cloud</b> - جميع الحقوق محفوظة</p>
     </footer>
 
     <script>
-        const API = "https://www.1secmail.com/api/v1/";
-        let currentEmail = localStorage.getItem('doby_mail') || "";
-        let lang = 'ar';
-
-        const i18n = {
-            ar: { h1: "بريدك النيوني المشفر", p1: "إخفاء الهوية بضغطة زر واحدة", copy: "نسخ", qr: "باركود", refresh: "تحديث", new: "جديد", inbox: "الرسائل الواردة", empty: "في انتظار وصول رسائل جديدة..", whH: "ما هو Doby Mail؟", whP: "نظام بريد إلكتروني مؤقت يحميك من الرسائل المزعجة.", howH: "طريقة الاستخدام", howP: "انسخ العنوان، استخدمه، ثم اضغط تحديث." },
-            en: { h1: "Neon Encrypted Mail", p1: "Anonymity with one click", copy: "Copy", qr: "QR Code", refresh: "Refresh", new: "New", inbox: "Inbox Messages", empty: "Waiting for new messages..", whH: "What is Doby Mail?", whP: "A temp mail system to protect you from spam.", howH: "How to use", howP: "Copy address, use it, then click refresh." }
+        // --- إعدادات FIREBASE (استبدلها ببياناتك الخاصة) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "doby-cloud.firebaseapp.com",
+            projectId: "doby-cloud",
+            storageBucket: "doby-cloud.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
         };
+        // -----------------------------------------------
 
-        async function generateNew() {
-            const res = await fetch(`${API}?action=genRandomMailbox&count=1`);
-            const data = await res.json();
-            currentEmail = data[0];
-            localStorage.setItem('doby_mail', currentEmail);
-            renderEmail();
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const uploadStatus = document.getElementById('upload-status');
+        const progressBar = document.getElementById('progress-bar');
+        const percentText = document.getElementById('percent');
+        const resultArea = document.getElementById('result-area');
+        const downloadInput = document.getElementById('download-url');
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => handleUpload(e.target.files[0]);
+
+        function handleUpload(file) {
+            if (!file) return;
+
+            uploadStatus.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+            document.getElementById('file-name-display').innerText = file.name;
+
+            const storageRef = storage.ref('uploads/' + file.name);
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                    percentText.innerText = Math.round(progress) + '%';
+                }, 
+                (error) => { alert("خطأ في الرفع: " + error.message); }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        resultArea.classList.remove('hidden');
+                        downloadInput.value = downloadURL;
+                        uploadStatus.classList.add('hidden');
+                    });
+                }
+            );
         }
 
-        function renderEmail() {
-            document.getElementById('emailText').innerText = currentEmail.toUpperCase();
-            const dom = currentEmail.split('@')[1];
-            document.getElementById('domainSelect').value = dom;
-            refreshInbox();
+        function copyLink() {
+            downloadInput.select();
+            document.execCommand("copy");
+            alert("تم نسخ رابط التحميل!");
         }
-
-        function updateDomain() {
-            const user = currentEmail.split('@')[0];
-            const newDom = document.getElementById('domainSelect').value;
-            currentEmail = `${user}@${newDom}`;
-            localStorage.setItem('doby_mail', currentEmail);
-            renderEmail();
-        }
-
-        async function refreshInbox() {
-            if(!currentEmail) return;
-            const [u, d] = currentEmail.split('@');
-            const res = await fetch(`${API}?action=getMessagesList&login=${u}&domain=${d}`);
-            const msgs = await res.json();
-            const container = document.getElementById('messages');
-            if(msgs.length > 0) {
-                container.innerHTML = msgs.map(m => `
-                    <div class="msg-item">
-                        <div><b>${m.from}</b><br><small>${m.subject}</small></div>
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function copyMail() {
-            navigator.clipboard.writeText(currentEmail);
-            alert(lang === 'ar' ? "تم النسخ!" : "Copied!");
-        }
-
-        function showQR() {
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), { text: currentEmail, width: 180, height: 180 });
-            document.getElementById('qrModal').style.display = "flex";
-        }
-
-        function toggleTheme() {
-            const b = document.body;
-            const isLight = b.getAttribute('data-theme') === 'light';
-            b.setAttribute('data-theme', isLight ? 'dark' : 'light');
-            document.getElementById('themeBtn').innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        }
-
-        function changeLang() {
-            lang = lang === 'ar' ? 'en' : 'ar';
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('langBtn').innerText = lang === 'ar' ? 'EN' : 'AR';
-            const t = i18n[lang];
-            document.getElementById('t-h1').innerText = t.h1; document.getElementById('t-p1').innerText = t.p1;
-            document.getElementById('b-copy').innerText = t.copy; document.getElementById('b-qr').innerText = t.qr;
-            document.getElementById('b-refresh').innerText = t.refresh; document.getElementById('b-new').innerText = t.new;
-            document.getElementById('t-inbox').innerText = t.inbox; document.getElementById('t-empty').innerText = t.empty;
-            document.getElementById('t-wh-h').innerText = t.whH; document.getElementById('t-wh-p').innerText = t.whP;
-            document.getElementById('t-how-h').innerText = t.howH; document.getElementById('t-how-p').innerText = t.howP;
-        }
-
-        if(!currentEmail) generateNew(); else renderEmail();
-        setInterval(refreshInbox, 10000);
     </script>
 </body>
 </html>
