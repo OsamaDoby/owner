@@ -2,155 +2,145 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Doby Chat | ❤️</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        .dark { background-color: #0b141a; color: white; }
-        .light { background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-color: #efeae2; color: #111b21; }
-        .msg-bubble { max-width: 75%; padding: 8px 12px; margin-bottom: 8px; position: relative; font-size: 15px; }
-        .msg-me { background-color: #005c4b; color: white; border-radius: 10px 0 10px 10px; align-self: flex-start; }
-        .msg-them { background-color: #202c33; color: white; border-radius: 0 10px 10px 10px; align-self: flex-end; }
-        .light .msg-me { background-color: #d9fdd3; color: #111b21; }
-        .light .msg-them { background-color: #ffffff; color: #111b21; }
-        #chat-box::-webkit-scrollbar { width: 5px; }
-        #chat-box::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+        :root { --main-color: #ff4d6d; --secondary-color: #ff8fa3; }
+        body { font-family: 'Cairo', sans-serif; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        .romantic-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        .light-mode { background: linear-gradient(135deg, #fff5f7 0%, #ffebf0 100%); color: #4a0413; }
+        
+        /* تحسين شكل الرسائل */
+        .msg-container { display: flex; flex-direction: column; gap: 8px; padding: 15px; overflow-y: auto; flex: 1; scroll-behavior: smooth; }
+        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 20px; font-size: 15px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: pop 0.3s ease-out; }
+        .mine { align-self: flex-start; background: linear-gradient(45deg, #ff4d6d, #ff758c); color: white; border-bottom-right-radius: 4px; }
+        .theirs { align-self: flex-end; background: #2a3942; color: #e9edef; border-bottom-left-radius: 4px; }
+        .light-mode .theirs { background: white; color: #111b21; }
+
+        @keyframes pop { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* شريط الكتابة المودرن */
+        .input-area { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .light-mode .input-area { background: rgba(255, 255, 255, 0.8); border-top: 1px solid #ddd; }
+        
+        input { border-radius: 25px !important; }
+        .logo-font { font-family: 'Pacifico', cursive; }
     </style>
 </head>
-<body class="dark h-screen flex flex-col overflow-hidden">
+<body class="romantic-bg text-white">
 
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#111b21] p-4">
-        <div class="bg-[#202c33] p-8 rounded-2xl shadow-2xl w-full max-w-md text-center border-t-4 border-emerald-500">
-            <h1 class="text-3xl font-bold mb-2 text-white">Doby Chat ❤️</h1>
-            <p class="text-gray-400 mb-6 italic">عالمكم الخاص الصغير</p>
-            <input type="password" id="secret-code" placeholder="أدخل كود الدخول الخاص بك..." 
-                   class="w-full p-4 rounded-xl bg-[#2a3942] text-white border-none mb-4 text-center focus:ring-2 ring-emerald-500 outline-none">
-            <button onclick="login()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
-                دخول للدردشة
-            </button>
-            <p id="error-msg" class="text-red-400 mt-4 hidden text-sm">كود خاطئ! حاول مرة أخرى يا جميل.</p>
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-6">
+        <div class="w-full max-w-sm text-center">
+            <div class="text-6xl mb-4 animate-bounce">💖</div>
+            <h1 class="logo-font text-4xl text-rose-500 mb-2">Doby Chat</h1>
+            <p class="text-gray-400 mb-8 text-sm">أهلاً بك في ركنكما الهادئ</p>
+            <input type="password" id="secret-code" placeholder="كلمة السر الخاصة بكما" 
+                   class="w-full p-4 rounded-full bg-white/10 border border-white/20 text-white text-center focus:ring-2 ring-rose-500 outline-none transition-all">
+            <button onclick="login()" class="w-full mt-4 bg-rose-600 hover:bg-rose-700 py-4 rounded-full font-bold shadow-lg shadow-rose-500/30 transition-all">دخول</button>
+            <p id="error-msg" class="text-rose-300 mt-4 hidden text-xs">حاول مرة أخرى يا روحي..</p>
         </div>
     </div>
 
-    <header class="p-3 flex justify-between items-center bg-[#202c33] shadow-lg z-10">
+    <header class="p-4 flex justify-between items-center border-b border-white/10 shadow-xl">
         <div class="flex items-center gap-3">
-            <div id="user-avatar" class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-xl shadow-inner">👤</div>
+            <div id="avatar" class="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-xl border-2 border-white/20 shadow-lg">❤️</div>
             <div>
-                <h2 id="user-display-name" class="font-bold text-sm">Doby Chat</h2>
-                <span class="text-[10px] text-emerald-400 flex items-center gap-1">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> متصل الآن
-                </span>
+                <h2 id="display-name" class="font-bold text-sm">Doby Chat</h2>
+                <span class="text-[10px] text-green-400 animate-pulse">● متصل الآن</span>
             </div>
         </div>
-        <div class="flex gap-3">
-            <button onclick="toggleLang()" id="lang-btn" class="text-xs bg-[#2a3942] px-3 py-1 rounded-full border border-gray-600">EN</button>
-            <button onclick="toggleTheme()" class="p-2 bg-[#2a3942] rounded-full">🌓</button>
+        <div class="flex gap-2">
+            <button onclick="toggleTheme()" class="bg-white/10 p-2 rounded-full text-lg">🌓</button>
+            <button onclick="toggleLang()" id="lang-btn" class="bg-white/10 px-3 py-1 rounded-full text-xs font-bold border border-white/10">EN</button>
         </div>
     </header>
 
-    <main id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-2">
-        </main>
+    <div id="chat-box" class="msg-container">
+        </div>
 
-    <footer class="p-3 bg-[#202c33] flex items-center gap-2">
-        <input type="text" id="msg-input" placeholder="اكتب رسالة..." 
-               class="flex-1 p-3 rounded-full bg-[#2a3942] text-white outline-none focus:ring-1 ring-emerald-500 text-sm">
-        <button onclick="sendMsg()" class="bg-emerald-600 p-3 rounded-full w-12 h-12 flex items-center justify-center hover:bg-emerald-700 transition-transform active:scale-90 shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+    <div class="input-area flex items-center gap-2">
+        <input type="text" id="msg-input" placeholder="اكتب شيئاً جميلاً..." 
+               class="flex-1 p-3 px-5 bg-white/10 text-white border-none focus:ring-1 ring-rose-500 outline-none text-[15px]">
+        <button onclick="sendMsg()" class="bg-rose-600 p-3 rounded-full w-12 h-12 flex items-center justify-center hover:scale-105 active:scale-90 transition-transform shadow-lg shadow-rose-600/20">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white rotate-[-45deg]">
+                <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
             </svg>
         </button>
-    </footer>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // إعدادات مشروعك اللي انت بعتها
+        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyAsQcdlGauMHmut0xOuVD6oDld-E9xVl2E",
-            authDomain: "doby-chat.firebaseapp.com",
             databaseURL: "https://doby-chat-default-rtdb.firebaseio.com",
             projectId: "doby-chat",
-            storageBucket: "doby-chat.firebasestorage.app",
-            messagingSenderId: "995153459605",
             appId: "1:995153459605:web:47aada2c97ed95317f1e9c"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let currentUser = "";
-        let currentLang = "ar";
-
-        // أكواد الدخول (غيرها زي ما تحب)
-        const users = {
-            "1111": { name: "دوبي المبدع", avatar: "🤵" }, 
-            "2222": { name: "دوبي الجميلة", avatar: "👰" }
-        };
+        let user = "";
+        const codes = { "1111": "دوبي المبدع", "2222": "دوبي الجميلة" };
 
         function login() {
-            const code = document.getElementById('secret-code').value;
-            if (users[code]) {
-                currentUser = users[code].name;
-                document.getElementById('user-avatar').innerText = users[code].avatar;
-                document.getElementById('user-display-name').innerText = currentUser;
+            const val = document.getElementById('secret-code').value;
+            if (codes[val]) {
+                user = codes[val];
+                document.getElementById('display-name').innerText = user;
                 document.getElementById('login-screen').style.display = 'none';
-                loadMessages();
+                load();
             } else {
                 document.getElementById('error-msg').classList.remove('hidden');
             }
         }
 
         function sendMsg() {
-            const text = document.getElementById('msg-input').value;
-            if (text.trim() === "") return;
-
+            const input = document.getElementById('msg-input');
+            if (!input.value.trim()) return;
             db.ref("messages").push({
-                user: currentUser,
-                text: text,
-                timestamp: Date.now(),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                u: user,
+                t: input.value,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                ts: Date.now()
             });
-            document.getElementById('msg-input').value = "";
+            input.value = "";
         }
 
-        function loadMessages() {
-            db.ref("messages").orderByChild("timestamp").on("child_added", (snapshot) => {
-                const data = snapshot.val();
-                const isMe = data.user === currentUser;
-                const msgHTML = `
+        function load() {
+            db.ref("messages").limitToLast(50).on("child_added", s => {
+                const d = s.val();
+                const isMe = d.u === user;
+                const html = `
                     <div class="flex flex-col ${isMe ? 'items-start' : 'items-end'}">
-                        <div class="msg-bubble ${isMe ? 'msg-me shadow-md' : 'msg-them shadow-md'}">
-                            <p class="text-[11px] font-bold mb-1 opacity-70">${data.user}</p>
-                            <p class="leading-relaxed">${data.text}</p>
-                            <p class="text-[9px] mt-1 text-right opacity-60">${data.time}</p>
+                        <div class="bubble ${isMe ? 'mine' : 'theirs'}">
+                            <p class="text-[10px] mb-1 opacity-70 font-bold">${d.u}</p>
+                            <p class="text-sm">${d.t}</p>
+                            <p class="text-[9px] mt-1 text-right opacity-60">${d.time}</p>
                         </div>
-                    </div>
-                `;
-                const chatBox = document.getElementById('chat-box');
-                chatBox.innerHTML += msgHTML;
-                chatBox.scrollTop = chatBox.scrollHeight;
+                    </div>`;
+                const box = document.getElementById('chat-box');
+                box.innerHTML += html;
+                box.scrollTop = box.scrollHeight;
             });
         }
 
         function toggleTheme() {
-            document.body.classList.toggle('dark');
-            document.body.classList.toggle('light');
+            document.body.classList.toggle('light-mode');
         }
 
         function toggleLang() {
-            currentLang = currentLang === "ar" ? "en" : "ar";
-            document.body.dir = currentLang === "ar" ? "rtl" : "ltr";
-            document.getElementById('lang-btn').innerText = currentLang === "ar" ? "EN" : "AR";
-            document.getElementById('msg-input').placeholder = currentLang === "ar" ? "اكتب رسالة..." : "Type a message...";
+            const isAr = document.body.dir === "rtl";
+            document.body.dir = isAr ? "ltr" : "rtl";
+            document.getElementById('lang-btn').innerText = isAr ? "AR" : "EN";
+            document.getElementById('msg-input').placeholder = isAr ? "Type a message..." : "اكتب شيئاً جميلاً...";
         }
 
-        // إرسال بالضغط على Enter
-        document.getElementById('msg-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendMsg();
-        });
+        document.getElementById('msg-input').onkeypress = (e) => e.key === 'Enter' && sendMsg();
     </script>
 </body>
 </html>
